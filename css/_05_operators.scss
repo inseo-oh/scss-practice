@@ -1,0 +1,47 @@
+@use "sass:math";
+
+//------------------------------------------------------------------------------
+// 연산자
+//------------------------------------------------------------------------------
+
+@mixin op($lhs, $rhs, $op, $result) {
+    width: 1000px;
+    height: 50px;
+    background: lightgray;
+    &::after {
+        // https://sass-lang.com/documentation/operators/string/
+        // 
+        // 문자열 값도 더할 수 있으며, 숫자와 문자를 더하는 것도 가능함.
+        content: $lhs + " " + $op + " " + + $rhs + " = " + $result;
+        // interpolation을 사용하는 방법
+        // https://sass-lang.com/documentation/interpolation/
+        content: "#{$lhs} #{$op} #{$rhs} = #{$result}";
+ 
+        display: block;
+        width: $result; 
+        background: darkcyan;
+        color: white;
+    }
+}
+
+.op .add {
+    @include op(340px, 350px, '+', 340px + 350px);
+}
+
+.op .sub {
+    @include op(700px, 10px,  '-', 700px - 10px);
+}
+
+.op .mul {
+    @include op(50px,  10,  '*', 50px * 10);
+}
+
+.op .div {
+    // div는 / 문자는 CSS 문법과 충돌할 우려가 있어 math.div를 사용함
+    // (파일 상단에 @use "sass:math"; 필요)
+    @include op(1000px, 3,  '/', math.div(1000px, 3));
+}
+
+.op .mod {
+    @include op(50em,  3,  '%', 50em % 3);
+}

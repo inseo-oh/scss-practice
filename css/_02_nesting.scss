@@ -1,0 +1,23 @@
+//------------------------------------------------------------------------------
+// SCSS nesting
+//
+// 최신 CSS에서 지원되는 nesting하고 비슷한것 같다. 100% 같은지는 몰라도
+//------------------------------------------------------------------------------
+
+.nesting {
+    ol {
+        list-style-type: lower-roman;
+        li:nth-child(2n)::before {
+            color: blue;
+            content: "<";
+        }
+        li:nth-child(2n + 1)::before {
+            color: red;
+            content: ">";
+        }
+        // &를 사용하면 현재 요소를 가리킬 수 있다
+        &::before {
+            content: "&::before"
+        }
+    }
+}

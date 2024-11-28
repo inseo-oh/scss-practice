@@ -1,0 +1,48 @@
+//------------------------------------------------------------------------------
+// extend
+// https://sass-lang.com/guide/#extend-inheritance
+//
+// https://13akstjq.github.io/sass/2020/02/22/mixin%EA%B3%BC-extend-%EC%95%8C%EB%A7%9E%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0.html
+//
+// mixin과 비슷한 유형의 기능이지만, mixin은 스타일시트 조각을 삽입하는 방식이라면
+// extend는 여러 선택자에서 같은 스타일을 공유하는 방식이다. 따라서 "이 규칙은 특정 placeholder를
+// 상속받는다는" 라는 느낌으로 보는게 좋다.
+//
+// Java, JS에서의 class A extends B의 쓰임을 생각하면 쉽다.
+//------------------------------------------------------------------------------
+
+.logbox {
+    padding: 0px;
+
+    %message-common {
+        margin: 5px;
+        background: #111;
+        color: #eee;
+        box-shadow: 5px 5px 10px black;
+        width: 300px;
+        height: 50px;
+    }
+
+    .info {
+        @extend %message-common;
+        display: block;
+        &::before {
+            content: "[INFO] ";
+            color: green;
+        }
+    }
+    .warning {
+        @extend %message-common;
+        &::before {
+            content: "[WARN] ";
+            color: orange;
+        }
+    }
+    .error {
+        @extend %message-common;
+        &::before {
+            content: "[ERROR] ";
+            color: red;
+        }
+    }
+}

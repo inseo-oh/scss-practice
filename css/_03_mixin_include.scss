@@ -1,0 +1,134 @@
+
+//------------------------------------------------------------------------------
+// mixin (재사용 가능한 스타일시트)
+//
+// https://sass-lang.com/guide/#mixins
+// https://sass-lang.com/documentation/at-rules/mixin/
+//
+// https://velog.io/@bami/SCSS-SCSS-%EB%AC%B8%EB%B2%955-mixin-inclue
+//
+//------------------------------------------------------------------------------
+
+// 아래와 같이 $colorL: black 과 같이 기본값을 지정할 수 있음
+@mixin two-colors($colorL: black, $colorR: purple, $size: 50%) {
+    background: linear-gradient(to right, $colorL, $colorL $size, $colorR $size, $colorR);
+}
+
+.mixin .grad {
+    width: 500px;
+    height: 100px;
+    position: relative;
+    @include two-colors;
+
+    p {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background: white;
+        color: black;
+    }
+}
+
+.mixin .grad2 {
+    width: 500px;
+    height: 100px;
+    // 아래 경우 $size는 기본값을 사용함
+    @include two-colors(pink, gray)
+}
+
+.mixin .grad3 {
+    width: 500px;
+    height: 100px;
+    @include two-colors(pink, gray, 60%)
+}
+
+.mixin .grad4 {
+    width: 500px;
+    height: 100px;
+    // 파라미터 이름으로도 지정 가능
+    @include two-colors($size: 60px, $colorR: pink, $colorL: gray)
+}
+
+// 기본값 지정시 앞 변수도 참조 가능
+// (연산자에 대해선 뒤쪽에 있음)
+@mixin added-font-size ($x, $y, $z: $x + $y) {
+    font-size: $z;
+}
+
+.mixin .big-font {
+    @include added-font-size(34px, 35);
+}
+
+// 가변 인수도 지원
+
+@mixin rect($width, $height, $backgrounds...) {
+    width: $width;
+    height: $height;
+    background: $backgrounds;
+}
+
+.mixin .rect {
+    background: darkgray;
+    @include rect(
+        100px, 200px, 
+        linear-gradient(to right, red, transparent),
+        linear-gradient(to bottom, green, transparent),
+        linear-gradient(to left, blue, transparent),
+        linear-gradient(to top, orange, transparent),
+    );
+    color: #fff;
+}
+
+// @content를 사용하면 mixin 내에 추가 스타일을 넣을 수 있음.
+//
+// 단, mixin이 CSS에 적용되었을 때 복사-붙여넣기 느낌이라서 @content도 여러번 쓰면 배로 복붙되므로 조심
+
+@mixin rainbow-strip($width, $height) {
+    width: $width;
+    height: $height;
+    display: flex;
+    list-style: none;
+    padding: 0px;
+
+    li {
+        background: hsl(0deg, 100%, 69%);
+        color: black;
+        width: 100%;
+        text-align: center;
+        font-size: 32px;
+        @content;
+    }
+    li:nth-child(2) {
+        background: hsl(30deg, 100%, 69%);
+        @content;
+    }
+    li:nth-child(3) {
+        background: hsl(60deg, 100%, 69%);
+        @content;
+    }
+    li:nth-child(4) {
+        background: hsl(90deg, 100%, 69%);
+        @content;
+    }
+    li:nth-child(5) {
+        background: hsl(240deg, 100%, 69%);
+        @content;
+    }
+    li:nth-child(6) {
+        background: hsl(280deg, 100%, 69%);
+        @content;
+    }
+}
+
+.mixin .rainbow-strip {
+    @include rainbow-strip(720px, 50px) {
+        // 이 스타일은 @content에 의해 @mixin에서 정의한 li 규칙들에 들어감
+        &::before {
+            content: "<";
+        }
+        &::after {
+            content: ">";
+        }
+        font-style: italic;
+    }
+}

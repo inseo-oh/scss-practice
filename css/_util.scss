@@ -1,0 +1,6 @@
+
+@mixin echo($result) {
+    &::after {
+        content: "#{$result}";
+    }
+}
