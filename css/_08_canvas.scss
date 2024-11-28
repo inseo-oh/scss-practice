@@ -1,0 +1,63 @@
+//------------------------------------------------------------------------------
+// 
+//------------------------------------------------------------------------------
+@use "sass:math";
+@use "sass:list";
+
+$width: 128px;
+$height: 64px;
+
+@function pixel-offset($x, $y) {
+    $result: ($y - 1) * $width + ($x - 1) + 1;
+    @return calc($result / 1px);
+}
+
+@function make-framebuffer() {
+    @debug "Creating empty framebuffer...";
+    $fb: ();
+    @for $y from 1 through $height {
+        @for $x from 1 through $width {
+            $fb: list.append($fb, black)
+        }
+    }
+    @return $fb;
+}
+
+@function draw-pixel($pixels, $x, $y, $color) {
+    @return list.set-nth($pixels, pixel-offset($x, $y), $color);
+}
+
+@function draw-rect($pixels, $left, $top, $right, $bottom, $color) {
+    $new-pixels: $pixels;
+    @for $y from $top through $bottom {
+        @for $x from $left through $right {
+            $new-pixels: draw-pixel($new-pixels, $x, $y, $color);
+        }
+    }
+    @return $new-pixels;
+}
+
+@mixin fake-canvas($pixels) {
+    width: $width;
+    height: $height;
+    $gradients: (linear-gradient(transparent, transparent) no-repeat 0 0,);
+    @debug "Creating canvas...";
+    @for $y from 1 through $height {
+        @for $x from 1 through $width {
+            $poff: pixel-offset($x, $y);
+            $pxl: list.nth($pixels, $poff);
+            $grad: linear-gradient($pxl, $pxl) no-repeat (1px + $y) list.slash((1px + $x), 1px 1px);
+            $gradients: list.append($gradients, $grad);
+        }
+    }   
+    background: $gradients;
+}
+
+
+.fake-canvas {
+    $pixels: make-framebuffer();
+    $pixels: draw-rect($pixels, 10, 10, 20, 20, darkred);
+    transform: scale(5);
+    transform-origin: left top;
+    @include fake-canvas($pixels)
+}
