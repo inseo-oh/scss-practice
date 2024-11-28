@@ -1,0 +1,90 @@
+@use "_util";
+@use "sass:list";
+@use "sass:meta";
+
+//------------------------------------------------------------------------------
+// list 타입, @each
+//------------------------------------------------------------------------------
+
+.list {
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    // list는 아래 방식 중 하나로 작성될 수 있으며, 각자 그에 해당되는 방식으로 CSS가 만들어짐
+    $list1: (1, 2, 3);              // CSS: 1, 2, 3
+    $list2: list.slash(1, 2, 3);    // CSS: 1 / 2 / 3
+    $list3: 1, 2, 3;                // CSS: 1, 2, 3
+    $list4: [x y z];                // CSS: [x, y, z]
+    $list5: x y z;                  // CSS: x y z
+    li:nth-child(1) {
+        @include util.echo($list1);
+    }
+    li:nth-child(2) {
+        @include util.echo($list2);
+    }
+    li:nth-child(3) {
+        @include util.echo($list3);
+    }
+    li:nth-child(4) {
+        @include util.echo($list4);
+    }
+    li:nth-child(5) {
+        @include util.echo($list5);
+    }
+    // array 인덱스는 1부터 시작하며, -1부터는 마지막에서부터 시작되는 index 값
+    // 개별 값은 list.nth로 얻을 수 있음. (@use "sass:list" 필요)
+    li:nth-child(6) {
+        @include util.echo(list.nth(first second last, 1));
+    }
+    li:nth-child(7) {
+        @include util.echo(list.nth(first second last, -1));
+    }
+    // list에 값을 추가할 수 있는데, SASS list는 불변형 값이기 때문에 기존 리스트를 수정하는 대신
+    // 새 list값을 반환함.
+    // (만약 기존 list를 바꾸고 싶으면 list가 있던 변수에 재할당하는 방식으로 하면 됨)
+    li:nth-child(8) {
+        @include util.echo(list.append(one two three, added-item));
+    }
+    // list에서 값을 찾을 수 있음
+    li:nth-child(9) {
+        @include util.echo(list.index(one two three, one));
+    }
+    li:nth-child(10) {
+        @include util.echo(list.index(one two three, two));
+    }
+    li:nth-child(11) {
+        @include util.echo(list.index(one two three, four));
+    }
+
+    // @each를 통해 개별 항목 순회가 가능함(JS의 for of)
+    li:nth-child(12) {
+        $result-string: "";
+        @each $val in 1 2 3 4 5 6 7 8 9 10 {
+            $result-string: $result-string + "#{$val}, "
+        }
+        @include util.echo($result-string);
+    }
+
+    // 가변인자도 리스트임
+    @mixin varargs($args...) {
+        @include util.echo($args);
+    }
+    li:nth-child(13) {
+        @include varargs(arg1, arg2);
+    }
+
+    // 추가로, 키워드 형태로 전달받은 경우에는 meta.keywords를 통해 map을 얻을 수 있음:
+    @mixin varargs-kwd($args...) {
+        $result-string: "";
+        @each $name, $color in meta.keywords($args) {
+            $result-string: $result-string + "#{$name}=#{$color}, "
+        }
+        @include util.echo($result-string);
+    }
+    li:nth-child(14) {
+        @include varargs-kwd($key1: arg1, $key2: arg2);
+    }
+}
+

@@ -1,19 +1,50 @@
 //------------------------------------------------------------------------------
-// SCSS 변수
+// 변수
 //------------------------------------------------------------------------------
+@use "sass:math";
 
+// top-level에 정의된 변수는 global 변수
 $red: red;
 $green: green;
 $blue: blue;
+// !default로 지정하면 @use시 with를 통해 따로 값이 지정되지 않은 경우에만 사용됨
+$opacity: 0 !default;
 
+.variables div {
+    opacity: $opacity;
+}
 .variables div:nth-of-type(1) {
     color: $red;
 }
 .variables div:nth-of-type(2) {
+    // 블록 내 정의된 변수는 local 변수(해당 블록에서만 유효함)
+    $font-family: sans-serif;
+    p {
+        // 같은 변수를 새 블록 내에서 정의하면 상위 변수를 shadow함
+        $font-family: serif;
+        font-family: $font-family;
+        font-size: 12px;
+        margin: 0;
+        margin-left: 10px;
+    }
+    // 위에서 지정한 font-family는 p {...} 내에서만 유효하기 때문에 여기선 다시 sans-serif로 돌아와야 함
+    font-family: $font-family;
     color: $green;
 }
 .variables div:nth-of-type(3) {
+    // @if와 같은 흐름제어 규칙에서는 일반 블록과 달리 예외적으로 상위 블록의 스코프를 따라감
+    $font-size: 1px;
+    @for $n from 1 to 6 {
+        $font-size: $font-size + $font-size;
+    }
+    font-size: $font-size;
     color: $blue;
+    .random-class-name {
+        // !global을 지정하면 스코프와 관계 없이 무조건 전역변수를 수정함. 따라서 아래 값은 현재 블록을 벗어나도 적용됨.
+        // (수정만 가능 - 새로운 전역변수를 만들 수는 없음)
+        $blue: lightblue !global;
+        // 아래 값은 현재 블록 내에서 local 변수를 정의하기 때문에 현재 블록을 벗어나면 적용되지 않음.
+        $blue: pink;
+    }
+    background-color: $blue;
 }
-
-// TODO: https://sass-lang.com/documentation/variables/#configuring-modules

@@ -1,0 +1,63 @@
+@use "_util";
+@use "sass:map";
+@use "sass:meta";
+@use "sass:list";
+
+@mixin echo-map($map) {
+    $result-string: "";
+    @each $key, $val in $map {
+        $result-string: $result-string + "#{$key} is #{$val}, "
+    }
+    @include util.echo($result-string);
+}
+
+//------------------------------------------------------------------------------
+// map 타입, @each
+//------------------------------------------------------------------------------
+
+.map {
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    // list와 달리 map은 그 자체로는 유효한 CSS 값이 아니며, (x: y, z: q) 문법을 통해서만 가능함:
+    // (map 키 값은 혼란을 피하기 위해 ""나 ''로 감싸는게 좋음 - https://sass-lang.com/documentation/values/maps/)
+    $map: ("foo": 1, "bar": 2);
+
+    li:nth-child(1) {
+        @include echo-map($map);
+    }
+    // map도 list임 -> (1: 2, 3: 4) == (1 2, 3 4)
+    li:nth-child(2) {
+        @include util.echo(list.nth(("first": 1, "second": 2), 1));
+    }
+
+    // map의 값 구하기
+    li:nth-child(3) {
+        @include util.echo(map.get(("first": 1, "second": 2), "first"));
+    }
+    li:nth-child(4) {
+        @include util.echo(map.get(("first": 1, "second": 2), "second"));
+    }
+
+    // list와 마찬가지로 map도 값을 추가할 수 있음
+    li:nth-child(5) {
+        @include echo-map(map.set(("first": 1, "second": 2), "third", 3));
+    }
+    // 혹은 두 map을 합치는것도 가능함. 만약 두 키가 충돌하면 두번째 map에 있는 값이 우선됨.
+    li:nth-child(6) {
+        @include echo-map(map.merge(("first": 1, "second": 2), ("second": 20, "third": 30)));
+    }
+
+    // list와 마찬가지로 @each를 통해 개별 항목 순회가 가능함
+    // (list의 @each 문법을 써도 됨 - 그 경우엔 list처럼 취급됨)
+    li:nth-child(7) {
+        $result-string: "";
+        @each $key, $val in $map {
+            $result-string: $result-string + "#{$key} is #{$val}, "
+        }
+        @include util.echo($result-string);
+    }
+}
+

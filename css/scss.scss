@@ -8,10 +8,14 @@
 //
 // 만약 파일명을 기반으로 생성된 namespace 이름이 식별자로 쓰일 수 없는 이름이면 오류가 발생하는데
 // 그런 경우 as를 통해 직접 namespace 이름을 지정해주면 됨.
-@use "_01_variables" as variables;
+@use "_01_variables" as variables with (
+    $opacity: 1
+);
 @use "_02_nesting" as nesting;
 @use "_03_mixin_include" as mixin-include;
 @use "_04_extend" as extend;
 @use "_05_operators" as operators;
 @use "_06_1_if" as if;
 @use "_06_2_for_while" as for-while;
+@use "_06_3_list_each" as list-each;
+@use "_06_4_map_each" as map-each;
